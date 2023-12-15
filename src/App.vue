@@ -1,13 +1,16 @@
-<script setup>
-import { RouterView } from 'vue-router'
-// import HelloWorld from './components/HelloWorld.vue'
-</script>
 
 <template>
- 
-
+  <h1>Hello!</h1>
   <RouterView />
 </template>
+
+<script>
+  export default {name: "app"}
+</script>
+
+<script setup>
+// import {AboutView, HomeView} from './views';
+</script>
 
 <style scoped>
 </style>
