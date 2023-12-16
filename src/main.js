@@ -1,8 +1,8 @@
-import "./assets/main.css";
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
+import ToastService from 'primevue/toastservice';
 import App from "./App.vue";
 import router from "./router";
 import primeComponents from "@/prime";
@@ -17,5 +17,6 @@ primeComponents.map((prime) => app.component(prime.name, prime));
 app.use(createPinia());
 app.use(router);
 app.use(PrimeVue, { ripple: true });
+app.use(ToastService);
 
 app.mount("#app");

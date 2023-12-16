@@ -1,16 +1,14 @@
-
 <template>
-  <h1>Hello!</h1>
   <RouterView />
+  <Toast />
 </template>
 
 <script>
-  export default {name: "app"}
+export default { name: "app" };
 </script>
 
 <script setup>
 // import {AboutView, HomeView} from './views';
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
