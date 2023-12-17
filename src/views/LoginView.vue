@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-content-center surface-200  h-screen">
+  <div class="flex justify-content-center surface-200 h-screen">
     <div
       class="surface-0 p-3 w-full border-1 border-200 h-screen flex flex-column justify-content-between"
       @submit.prevent="login"
@@ -60,7 +60,7 @@
           label="Авторизоваться"
           :disabled="v$.$invalid"
           :loading="loading"
-          @click="login({ email, password })"
+          @click="login({email, password})"
         />
 
         <p class="text-center text-500">
@@ -71,7 +71,6 @@
         </p>
       </div>
     </div>
-    
   </div>
 </template>
 <script>
@@ -82,6 +81,7 @@ export default { name: "login-view" };
 import logo from "@/assets/icons/logo.svg";
 import { useVuelidate } from "@vuelidate/core";
 import { useAuthStore } from "@/stores/auth";
+
 import {
   required,
   minLength,
@@ -95,12 +95,14 @@ const password = ref("");
 
 const auth = useAuthStore();
 
+
 const { login, loading } = auth;
 
 const rules = computed(() => ({
   email: { required, vuelidateEmail, $autoDirty: true },
   password: { required, minLength: minLength(5), $autoDirty: true },
 }));
+
 
 const v$ = useVuelidate(rules, { email, password });
 </script>

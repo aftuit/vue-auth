@@ -1,6 +1,6 @@
 <template>
   <RouterView />
-  <Toast />
+  <Toast position="bottom-right" />
 </template>
 
 <script>

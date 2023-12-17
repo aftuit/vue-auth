@@ -5,5 +5,6 @@ import InputNumber from 'primevue/inputnumber';
 import InputMask from 'primevue/inputmask';
 import Toast from 'primevue/toast';
 import Password from 'primevue/password';
+import Skeleton from 'primevue/skeleton';
 
-export default [Button, Calendar, InputText, InputNumber, InputMask, Toast, Password]
+export default [Button, Calendar, InputText, InputNumber, InputMask, Toast, Password, Skeleton]
