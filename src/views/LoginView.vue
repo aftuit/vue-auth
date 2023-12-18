@@ -88,7 +88,6 @@ import { computed, ref } from "vue";
 const email = ref("");
 const password = ref("");
 const loading = ref(false);
-const errors = ref(null);
 
 const auth = useAuthStore();
 
