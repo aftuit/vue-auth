@@ -18,7 +18,7 @@ coverage
 *.local
 
 # Environment Var
-env
+*.env
 
 /cypress/videos/
 /cypress/screenshots/
