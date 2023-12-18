@@ -1,20 +1,17 @@
 import { reactive, ref } from "vue";
 import { defineStore } from "pinia";
-import axios from "axios";
+import axios from "@/service/axios";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from "vue-router";
-
-// import AuthService from "@/service/auth";
+import utils from "./index";
 
 export const useAuthStore = defineStore("auth", () => {
   const loading = ref(false);
 
-  let profile = reactive({
-    username: "",
-    role: "",
-  });
+  let profile = ref(null);
 
-  const base_url = import.meta.env.VITE_API_BASE_URL;
+  const [base_url] = utils;
+
   const toast = useToast();
   const router = useRouter();
   const showToast = (severity, summary, detail) => {
@@ -29,49 +26,47 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const login = (payload) => {
-    loading.value = true;
-    axios
-      .post(`${base_url}/api/auth/login`, {
-        grant_type: "password",
-        client_id: 2,
-        client_secret: "IPRahHhmqyyPHWw1eclDbcQc5TWsjK4yY9gr1US0",
-        username: payload.email,
-        password: payload.password,
-        is_remember: 1,
-      })
-      .then((res) => {
-        console.log(res);
-        if (res.statusText === "OK")
-          showToast("success", "Success", "Successfully logged in!");
-        localStorage.setItem("access_token", res.data.access_token);
-        router.push({ name: "home" });
-      })
-      .catch((err) => {
-        showToast("error", "Warning", err.message);
-      })
-      .finally(() => (loading.value = false));
+    return new Promise((resolve, reject) => {
+      axios
+        .post(`${base_url}/api/auth/login`, {
+          grant_type: "password",
+          client_id: 2,
+          client_secret: "IPRahHhmqyyPHWw1eclDbcQc5TWsjK4yY9gr1US0",
+          username: payload.email.value,
+          password: payload.password.value,
+          is_remember: 1,
+        })
+        .then((res) => {
+          if (res.statusText === "OK")
+            showToast("success", "Success", "Successfully logged in!");
+          localStorage.setItem("access_token", res.data.access_token);
+          router.push({ name: "home" });
+          resolve(res);
+        })
+        .catch((err) => {
+          showToast("error", "Warning", err.message);
+          reject(err);
+        });
+    });
   };
 
   const getProfile = () => {
-    loading.value = true;
-    axios
-      .get(`${base_url}/api/master/user/profile`, {
-        headers: {
-          Accept: "application/json",
-          "Content-type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        profile.username = res.data.data.username;
-        profile.role = res.data.data.roles[3];
-      })
-      .catch((err) => {
-        console.log(err);
-        showToast("error", "Warning", err.message);
-      })
-      .finally(() => (loading.value = false));
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${base_url}/api/master/user/profile`)
+        .then((res) => {
+          profile.value = res.data.data;
+          resolve();
+        })
+        .catch((err) => {
+          console.log(err);
+          showToast("error", "Warning", err.message);
+          if (err.response.status === 401) {
+            router.push({ name: "login" });
+          }
+          reject();
+        });
+    });
   };
 
   return { loading, login, base_url, getProfile, profile };

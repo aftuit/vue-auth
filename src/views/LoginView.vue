@@ -10,20 +10,19 @@
         <h2 class="text-xl text-center">Добро пожаловать!</h2>
 
         <div class="mt-4">
-          <label for="email" class="block">Электронная почта</label>
+          <label for="email" class="block">Логин</label>
           <InputText
             id="email"
             class="mt-1 w-full"
-            placeholder="Введите электронную почту"
-            @blur="v$.email.$touch"
+            placeholder="Введите логин"
             v-model="email"
           />
-          <span
+          <small
             v-for="error in v$.email.$errors"
             :key="error.$uid"
-            class="text-red-500 text-sm"
+            class="text-red-500"
           >
-            {{ error.$message }}</span
+            {{ error.$message }}</small
           >
         </div>
 
@@ -40,12 +39,12 @@
               placeholder="Введите пароль"
             />
           </span>
-          <span
+          <small
             v-for="error in v$.password.$errors"
             :key="error.$uid"
-            class="text-red-500 text-sm"
+            class="text-red-500"
           >
-            {{ error.$message }}</span
+            {{ error.$message }}</small
           >
         </div>
         <p class="text-blue-500 cursor-pointer hover:underline w-fit">
@@ -58,10 +57,10 @@
           type="button"
           :severity="v$.$invalid ? 'secondary' : 'success'"
           label="Авторизоваться"
-          :disabled="v$.$invalid"
           :loading="loading"
-          @click="login({email, password})"
+          @click="loginHandler"
         />
+        <!-- :disabled="v$.$invalid" -->
 
         <p class="text-center text-500">
           Нет аккаунта?
@@ -74,7 +73,7 @@
   </div>
 </template>
 <script>
-export default { name: "login-view" };
+export default { name: "login" };
 </script>
 
 <script setup>
@@ -82,27 +81,34 @@ import logo from "@/assets/icons/logo.svg";
 import { useVuelidate } from "@vuelidate/core";
 import { useAuthStore } from "@/stores/auth";
 
-import {
-  required,
-  minLength,
-  email as vuelidateEmail,
-} from "@vuelidate/validators";
+import { required, email as vuelidateEmail } from "@vuelidate/validators";
 //
 import { computed, ref } from "vue";
 
 const email = ref("");
 const password = ref("");
+const loading = ref(false);
+const errors = ref(null);
 
 const auth = useAuthStore();
 
+const { login } = auth;
 
-const { login, loading } = auth;
+console.log(loading);
 
 const rules = computed(() => ({
-  email: { required, vuelidateEmail, $autoDirty: true },
-  password: { required, minLength: minLength(5), $autoDirty: true },
+  email: { required, vuelidateEmail },
+  password: { required },
 }));
 
+const loginHandler = () => {
+  loading.value = true;
+  v$.value.$validate().then(() => {
+    login({ email, password }).finally(() => {
+      loading.value = false;
+    });
+  });
+};
 
 const v$ = useVuelidate(rules, { email, password });
 </script>
